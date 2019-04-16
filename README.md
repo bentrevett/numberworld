@@ -7,5 +7,7 @@
 
 This repo. contains a toy environment for task-oriented language grounding, aimed at being used with reinforcement learning.
 
-<img src="https://github.com/bentrevett/rl-grounding/blob/master/state.png" width="210" height="210" class="center">
+<p align="center">
+    <img src="https://github.com/bentrevett/rl-grounding/blob/master/state.png">
+</p>
 
