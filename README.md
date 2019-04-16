@@ -21,5 +21,4 @@ In each episode, the agent's starting position and the objects (10 by default) w
 
 A successful agent must *recognize* objects in the raw pixel state, *ground* each concept in the instruction to actions and visual elements and *navigate* to the correct object.
 
-
-
+A random agent is provided, which reaches the correct object ~10% of the time.
