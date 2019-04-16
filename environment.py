@@ -241,11 +241,11 @@ class Environment:
         #convert to grid from string to np array
         self.str_grid_to_np_grid()
         
-        #generate a go to <color> <num> question
+        #generate a go to <color> <num> instruction
         color, num = random.choice(objects)
-        self.question = np.array([str2idx[color], str2idx[num]])
+        self.instruction = np.array([str2idx[color], str2idx[num]])
         
-        return self.question, self.grid
+        return self.instruction, self.grid
 
     def step(self, action):
 
@@ -293,7 +293,7 @@ class Environment:
             found_color, found_num = self.str_grid[self.agent_x][self.agent_y].split('-')
 
             #if we've found the correct object, give reward
-            if str2idx[found_color] == self.question[0] and str2idx[found_num] == self.question[1]:
+            if str2idx[found_color] == self.instruction[0] and str2idx[found_num] == self.instruction[1]:
                 reward = self.pos_reward
             else:
                 #else give negative reward
@@ -318,4 +318,4 @@ class Environment:
             self.done = True
             reward = self.neg_reward
 
-        return self.question, self.grid, reward, self.done
+        return self.instruction, self.grid, reward, self.done

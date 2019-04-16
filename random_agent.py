@@ -5,7 +5,7 @@ import environment
 
 env = environment.Environment()
 
-n_episodes = 10_000
+n_episodes = 1000
 successful_episodes = 0
 
 for episode in tqdm(range(n_episodes)):
@@ -19,7 +19,7 @@ for episode in tqdm(range(n_episodes)):
         action = random.randint(0, 3)
 
         #perform action
-        question, state, reward, done = env.step(action)
+        instruction, state, reward, done = env.step(action)
 
         if done:
             if reward == env.pos_reward:
