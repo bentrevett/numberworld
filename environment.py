@@ -111,7 +111,8 @@ idx2str = {i: x for i, x in enumerate(colors+nums)}
 
 class Environment:
     def __init__(self, 
-                 grid_size = 10, 
+                 grid_size = 10,
+                 state_scale = 5,
                  n_objects = 10,
                  time_limit = 250,
                  pos_reward = 1, 
@@ -120,6 +121,7 @@ class Environment:
                  seed=None):
 
         self.grid_size = grid_size
+        self.state_scale = state_scale
         self.n_objects = n_objects
         self.time_limit = time_limit
         self.pos_reward = pos_reward
@@ -170,6 +172,21 @@ class Environment:
                     raise ValueError(f'{color} is not a valid color!')
 
                 self.grid[i*7:(i+1)*7, j*7:(j+1)*7, :] = obj
+
+        #scale up the image by state_scale
+
+        new_grid = np.zeros((self.grid.shape[0] * self.state_scale,
+                             self.grid.shape[1] * self.state_scale,
+                             3)
+                           )
+
+        for j in range(self.grid.shape[0]):
+            for k in range(self.grid.shape[1]):
+                new_grid[j * self.state_scale: 
+                         (j+1) * self.state_scale, k * self.state_scale: (k+1) * self.state_scale, 
+                         :] = self.grid[j, k, :]
+
+        self.grid = new_grid
 
     def reset(self):
 
