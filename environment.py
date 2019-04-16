@@ -112,7 +112,8 @@ idx2str = {i: x for i, x in enumerate(colors+nums)}
 class Environment:
     def __init__(self, 
                  grid_size = 10, 
-                 n_objects = 10, 
+                 n_objects = 10,
+                 time_limit = 250,
                  pos_reward = 1, 
                  neg_reward = -1, 
                  neutral_reward = 0,
@@ -120,12 +121,13 @@ class Environment:
 
         self.grid_size = grid_size
         self.n_objects = n_objects
+        self.time_limit = time_limit
         self.pos_reward = pos_reward
         self.neg_reward = neg_reward
         self.neutral_reward = neutral_reward
         self.seed = seed
 
-        self.done = False
+        self.done = True
 
         if seed is not None:
             random.seed(seed)
@@ -169,8 +171,13 @@ class Environment:
 
                 self.grid[i*7:(i+1)*7, j*7:(j+1)*7, :] = obj
 
-
     def reset(self):
+
+        #tell if environment is done
+        self.done = False
+        
+        #counts timesteps taken
+        self.t = 0
 
         #generate all possible colour/object combinations
         colors = ['red', 'green', 'blue', 'yellow', 'purple', 'cyan']
@@ -225,7 +232,7 @@ class Environment:
 
     def step(self, action):
 
-        assert not self.done, "Environment is done, you should reset it!"
+        assert not self.done, "Environment needs to be reset!"
 
         #actions: 0 = up, 1 = right, 2 = down, 3 = left
 
@@ -286,5 +293,12 @@ class Environment:
 
         #redraw the grid
         self.str_grid_to_np_grid()
+
+        self.t += 1
+
+        if self.t >= self.time_limit and not self.done:
+            #if we have reached the maximum number of time-steps and still not found an object
+            self.done = True
+            reward = self.neg_reward
 
         return self.question, self.grid, reward, self.done
