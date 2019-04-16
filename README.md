@@ -1,6 +1,6 @@
 # Task-Oriented Language Grounding
 
-*"To perform tasks specified by natural language instructions, autonomous  agents  need  to  extract  semantically  meaning- ful  representations  of  language  and  map  it  to  visual  elements and actions in the environment. This problem is called task-oriented  language  grounding"* - [Gated-Attention Architectures for Task-Oriented Language Grounding
+*"To perform tasks specified by natural language instructions, autonomous  agents  need  to  extract  semantically  meaningful  representations  of  language  and  map  it  to  visual  elements and actions in the environment. This problem is called task-oriented  language  grounding"* - [Gated-Attention Architectures for Task-Oriented Language Grounding
 ](https://arxiv.org/abs/1706.07230)
 
 --- 
