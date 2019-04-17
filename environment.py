@@ -115,6 +115,8 @@ class Environment:
                  state_scale = 5,
                  n_objects = 10,
                  time_limit = 250,
+                 fog_size = None,
+                 fog_type = 'gray',
                  pos_reward = 1, 
                  neg_reward = -1, 
                  neutral_reward = 0,
@@ -124,6 +126,8 @@ class Environment:
         self.state_scale = state_scale
         self.n_objects = n_objects
         self.time_limit = time_limit
+        self.fog_size = fog_size
+        self.fog_type = fog_type
         self.pos_reward = pos_reward
         self.neg_reward = neg_reward
         self.neutral_reward = neutral_reward
@@ -134,8 +138,6 @@ class Environment:
         if seed is not None:
             random.seed(seed)
             np.random.seed(seed)
-
-        self.reset()
 
     def str_grid_to_np_grid(self):
 
@@ -149,6 +151,10 @@ class Environment:
 
                 obj = np.zeros((7,7,3))
             
+                if self.fog_size is not None:
+                    if abs(i - self.agent_x) > self.fog_size or abs(j - self.agent_y) > self.fog_size:
+                        color = self.fog_type
+
                 if color == 'red':
                     obj[:,:,0] = str2array[num]
                 elif color == 'green':
@@ -168,6 +174,12 @@ class Environment:
                 elif color == 'cyan':
                     obj[:,:,1] = str2array[num]
                     obj[:,:,2] = str2array[num]
+                elif color == 'noise-course':
+                    obj = self.fog[i:(i+1), j:(j+1), :]
+                elif color == 'noise-fine':
+                    obj = self.fog[i*7:(i+1)*7, j*7:(j+1)*7, :]
+                elif color == 'gray':
+                    obj = self.fog[i:(i+1), j:(j+1), :]
                 else:
                     raise ValueError(f'{color} is not a valid color!')
 
@@ -189,6 +201,16 @@ class Environment:
         self.grid = new_grid
 
     def reset(self):
+
+        #reset the fog
+        if self.fog_size is not None:
+            if self.fog_type in ['noise-course', 'noise-fine']:
+                self.fog = np.random.normal(size=(self.grid_size*7, self.grid_size*7, 3))
+            elif self.fog_type == 'gray':
+                self.fog = np.zeros((self.grid_size*7,self.grid_size*7,3))
+                self.fog.fill(0.5)
+            else:
+                raise ValueError(f'Fog type {self.fog_type} not found')
 
         #tell if environment is done
         self.done = False
