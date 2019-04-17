@@ -19,9 +19,9 @@ The goal of the agent is to reach the object denoted by the instruction, within 
 
 In each episode, the agent's starting position and the objects (10 by default) within the environment are selected at random. There are always at least two of each colored object within the environment, however not all colors appear in each environment, e.g. one environment might have 5 red objects and 5 blue objects and another might have 2 red, 2 blue, 2 green, 2 yellow and 2 purple objects. The desired object from the instruction is always within the environment.
 
-The environment can also be made partially observable with the `fog_size` parameter. With `fog_size` set to 2 the agent can only see the surrounding 2 cells, with the rest obscured by *fog*. A `fog_size` of `None` (the default) means there is no fog and the environment is fully observable. 
+The environment can also be made partially observable with the `fog_size` parameter. With `fog_size` set to 2 the agent can only see the surrounding 2 cells, with the rest obscured by *fog*. A `fog_size` of `None` (the default) means there is no fog and the environment is fully observable.
 
-There are three types of fog: gray, noise-course and noise-fine. Each are shown below.
+There are three types of fog: gray, noise-course and noise-fine. When the fog is made by noise, it is random each episode but will stay the same throughout the episode. Each are shown below.
 
 <p align="center">
     <img src="https://github.com/bentrevett/rl-grounding/blob/master/noise-gray.png">
@@ -35,6 +35,6 @@ There are three types of fog: gray, noise-course and noise-fine. Each are shown 
     <img src="https://github.com/bentrevett/rl-grounding/blob/master/noise-fine.png">
 </p>
 
-A successful agent must *recognize* objects in the raw pixel state, *explore* the environment when objects are obscured by fog, *ground* each concept in the instruction to actions and visual elements and *navigate* to the correct object.
+A successful agent must *recognize* objects in the raw pixel state, *explore* the environment when objects are obscured by fog, *ground* each concept in the instruction to actions and visual elements, and *navigate* to the correct object.
 
-A random agent is provided, which reaches the correct object ~10% of the time with the default settings. 
+A random agent is provided, which reaches the correct object ~10% of the time with the default settings.
