@@ -1,9 +1,9 @@
 import random
 from tqdm import tqdm
 
-import environment
+import numberworld
 
-env = environment.Environment()
+env = numberworld.make()
 
 n_episodes = 1000
 successful_episodes = 0
