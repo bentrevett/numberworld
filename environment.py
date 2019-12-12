@@ -1,373 +1,293 @@
 import numpy as np
 import random
 import itertools
-import copy
 
-str2array = {
-            '@': [[0,0,0,0,0,0,0], #agent
+COLORS = {'red': (0, 0),
+          'green': (1, 1),
+          'blue': (2, 2),
+          'yellow': (0, 1),
+          'purple': (0, 2),
+          'cyan': (1, 2),
+          'white': (0, 1, 2)}
+
+SPRITES = {
+            '@': np.array([[0,0,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,1,1,1,1,1,0],
                   [0,1,1,1,1,1,0],
                   [0,1,1,1,1,1,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,0,0]
-                 ],
-            '_': [[0,0,0,0,0,0,0], #blank space
-                  [0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0]
-                 ],
-            '0': [[0,0,0,0,0,0,0],
+                 ]),
+            '0': np.array([[0,0,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,1,0,0,0,1,0],
                   [0,1,0,0,0,1,0],
                   [0,1,0,0,0,1,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,0,0]
-                 ],
-            '1': [[0,0,0,0,0,0,0],
+                 ]),
+            '1': np.array([[0,0,0,0,0,0,0],
                   [0,0,0,1,0,0,0],
                   [0,0,0,1,0,0,0],
                   [0,0,0,1,0,0,0],
                   [0,0,0,1,0,0,0],
                   [0,0,0,1,0,0,0],
                   [0,0,0,0,0,0,0]
-                 ],
-            '2': [[0,0,0,0,0,0,0],
+                 ]),
+            '2': np.array([[0,0,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,1,0],
                   [0,1,1,1,1,1,0],
                   [0,1,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,0,0]
-                 ],
-            '3': [[0,0,0,0,0,0,0],
+                 ]),
+            '3': np.array([[0,0,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,1,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,1,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,0,0]
-                 ],
-            '4': [[0,0,0,0,0,0,0],
+                 ]),
+            '4': np.array([[0,0,0,0,0,0,0],
                   [0,1,0,0,0,1,0],
                   [0,1,0,0,0,1,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,1,0],
                   [0,0,0,0,0,1,0],
                   [0,0,0,0,0,0,0]
-                 ],
-            '5': [[0,0,0,0,0,0,0],
+                 ]),
+            '5': np.array([[0,0,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,1,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,1,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,0,0]
-                 ],
-            '6': [[0,0,0,0,0,0,0],
+                 ]),
+            '6': np.array([[0,0,0,0,0,0,0],
                   [0,1,0,0,0,0,0],
                   [0,1,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,1,0,0,0,1,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,0,0]
-                 ],
-            '7': [[0,0,0,0,0,0,0],
+                 ]),
+            '7': np.array([[0,0,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,1,0],
                   [0,0,0,0,0,1,0],
                   [0,0,0,0,0,1,0],
                   [0,0,0,0,0,1,0],
                   [0,0,0,0,0,0,0]
-                 ],
-            '8': [[0,0,0,0,0,0,0],
+                 ]),
+            '8': np.array([[0,0,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,1,0,0,0,1,0],
                   [0,1,1,1,1,1,0],
                   [0,1,0,0,0,1,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,0,0]
-                 ],
-            '9': [[0,0,0,0,0,0,0],
+                 ]),
+            '9': np.array([[0,0,0,0,0,0,0],
                   [0,1,1,1,1,1,0],
                   [0,1,0,0,0,1,0],
                   [0,1,1,1,1,1,0],
                   [0,0,0,0,0,1,0],
                   [0,0,0,0,0,1,0],
                   [0,0,0,0,0,0,0]
-                 ],            
-            }
-
-sprite_size = 7
-colors = ['red', 'green', 'blue', 'yellow', 'purple', 'cyan']
-nums = [str(i) for i in range(10)]
-object_combinations = list(itertools.product(colors, nums))
-
-str2idx = {x: i for i, x in enumerate(colors+nums)}
-idx2str = {i: x for i, x in enumerate(colors+nums)}
-
-class Cell:
-    """
-    Represents the contents of a single cell
-    """
-    def __init__(self, color, object):
-        
-        assert color in colors + ['black', 'white']
-        assert object in nums + ['@', '_']
-
-        self.color = color
-        self.object = object
+                 ])}
 
 class Environment:
     def __init__(self,
                  grid_size = 10,
-                 observation_scale = 5,
                  n_objects = 10,
                  time_limit = 250,
                  fog_size = None,
-                 fog_type = 'noise',
+                 fog_type = None,
                  positive_reward = 1,
                  neutral_reward = 0,
                  negative_reward = -1,
                  seed = None,
                  ):
 
-        assert grid_size >= 2 and (grid_size**2 + 1) >= n_objects and isinstance(grid_size, int)
-        assert observation_scale >= 1 and isinstance(observation_scale, int)
-        assert n_objects >= 1 and isinstance(n_objects, int)
-        assert time_limit >= 1 and isinstance(time_limit, int)
-        assert fog_size is None or (fog_size >= 1 and isinstance(fog_size, int))
-        assert fog_type in ['gray', 'noise'] and isinstance(fog_type, str)
-        assert isinstance(positive_reward, (int, float))
-        assert isinstance(neutral_reward, (int, float))
-        assert isinstance(negative_reward, (int, float))
-        assert positive_reward > neutral_reward > negative_reward
+        assert grid_size >= 2 and grid_size**2 >= (n_objects + 1)
+        assert n_objects >= 1
+        assert time_limit >= 1
+        assert fog_size is None or fog_size >= 1
+        assert fog_type in ['gray', 'noise', None]
         
         self.grid_size = grid_size
-        self.observation_scale = observation_scale
         self.n_objects = n_objects
         self.time_limit = time_limit
         self.fog_size = fog_size
         self.fog_type = fog_type
         self.positive_reward = positive_reward
-        self.negative_reward = negative_reward
         self.neutral_reward = neutral_reward
-        self.seed = seed
-        
-        self.done = True
-        self.blank_grid = [[Cell('black', '_') for _ in range(self.grid_size)] for _ in range(self.grid_size)]
-
-        grid_positions = [x for x in range(self.grid_size)]
-        self.xy_positions = list(itertools.product(grid_positions, grid_positions))
+        self.negative_reward = negative_reward
 
         if seed is not None:
             random.seed(seed)
             np.random.seed(seed)
 
+        self.sprite_size = 7
+        
+        colors = ['red', 'green', 'blue', 'yellow', 'purple', 'cyan']
+        numbers = [str(i) for i in range(10)]
+        self.objects = list(itertools.product(colors, numbers)) 
+        self.stoi = {x: i for i, x in enumerate(colors+numbers)}
+        self.itos = {i: x for i, x in enumerate(colors+numbers)}
+
+        assert n_objects <= len(self.objects), f'Maximum n_objects is {len(self.objects)}'
+
+        grid_positions = [x for x in range(grid_size)]
+        self.xy_positions = list(itertools.product(grid_positions, grid_positions))
+
     def reset(self):
+        
+        self.done = False
+        self.t = 0
 
-        self.generate_fog()
-
-        self.done = False #tell when episode is over
-        self.t = 0 #time-steps taken, used for time_limit
-
-        #get random color-object combinations for this episode
-        random.shuffle(object_combinations)
-        objects = object_combinations[:self.n_objects]
-
-        #make a blank grid
-        self.grid = copy.deepcopy(self.blank_grid)
-
-        #get agent starting position and object positions
-        agent_xy, *object_xys = random.sample(self.xy_positions, self.n_objects+1)
+        agent_xy, *object_xys = random.sample(self.xy_positions, self.n_objects + 1)
 
         self.agent_x, self.agent_y = agent_xy
 
-        #place agent in starting position
-        self.grid[self.agent_x][self.agent_y] = Cell('white', '@')
+        self.object_xys = set(object_xys)
 
-        #keep track of all object positions for reward calculation
-        self.object_positions = set()
+        random.shuffle(self.objects)
+        env_objects = self.objects[:self.n_objects]
 
-        #place all objects, 
-        for (obj_color, obj_num), (obj_x, obj_y) in zip(objects, object_xys):
-            self.grid[obj_x][obj_y] = Cell(obj_color, obj_num)
-            self.object_positions.add((obj_x, obj_y))
+        self.env_objects = [(oc, on, ox, oy) for (oc, on), (ox, oy) in zip(env_objects, object_xys)]
 
-        #create observation from grid
-        self.grid_to_observation()
+        target_color, target_number, self.target_x, self.target_y = random.choice(self.env_objects)
+        self.instruction = np.array([self.stoi[target_color], self.stoi[target_number]])
 
-        #generate a go to <color> <num> instruction
-        color, num = random.choice(objects)
-        self.instruction = np.array([str2idx[color], str2idx[num]])
-        
+        if self.fog_type is not None:
+            self.fog = self.make_fog()
+
+        self.observation = self.draw_grid()
+
         return self.instruction, self.observation
 
-    def generate_fog(self):
-        """
-        Fog should not change during the episode
-        This should be called by env.reset() and create the fog
-        """
+    def draw_grid(self):
 
-        if self.fog_size is not None:
-            if self.fog_type == 'noise':
-                self.fog = np.random.normal(size=(self.grid_size*sprite_size, self.grid_size*sprite_size, 3))
-            elif self.fog_type == 'gray':
-                self.fog = np.zeros((self.grid_size*sprite_size,self.grid_size*sprite_size,3))
-                self.fog.fill(0.5)
-            else:
-                raise ValueError(f'Fog type {self.fog_type} not found')
+        grid = np.zeros((self.grid_size * self.sprite_size,
+                         self.grid_size * self.sprite_size,
+                         3))
 
-    def grid_to_observation(self):
+        self.draw_sprite(grid, self.agent_x, self.agent_y, 'white', '@')
 
-        #create observation array
-        self.observation = np.zeros((self.grid_size*sprite_size, self.grid_size*sprite_size, 3))
+        for (object_color, object_number, object_x, object_y) in self.env_objects:
+            grid = self.draw_sprite(grid, object_x, object_y, object_color, object_number)
 
-        #place all objects
-        for obj_x, obj_y in self.object_positions:
-            
-            #pixels for single cell
-            cell_obs = np.zeros((sprite_size, sprite_size, 3))
-            
-            #get cell info
-            cell = self.grid[obj_x][obj_y]
+        if self.fog_type is not None:
+            grid = self.draw_fog(grid, self.fog, self.agent_x, self.agent_y)
 
-            #colour sprite
-            if cell.color == 'red':
-                cell_obs[:,:,0] = str2array[cell.object]
-            elif cell.color == 'green':
-                cell_obs[:,:,1] = str2array[cell.object]
-            elif cell.color == 'blue':
-                cell_obs[:,:,2] = str2array[cell.object]
-            elif cell.color == 'yellow':
-                cell_obs[:,:,0] = str2array[cell.object]
-                cell_obs[:,:,1] = str2array[cell.object]
-            elif cell.color == 'purple':
-                cell_obs[:,:,0] = str2array[cell.object]
-                cell_obs[:,:,2] = str2array[cell.object]
-            elif cell.color == 'cyan':
-                cell_obs[:,:,1] = str2array[cell.object]
-                cell_obs[:,:,2] = str2array[cell.object]
-            elif cell.color == 'white': #this should only be called on the end of an episode
-                assert cell.object == '@'
-                assert self.done == True
-                cell_obs[:,:,0] = str2array[cell.object]
-                cell_obs[:,:,1] = str2array[cell.object]
-                cell_obs[:,:,2] = str2array[cell.object]
-            else:
-                raise ValueError
+        return grid
 
-            #place sprite cell inside observation image
-            self.observation[obj_x*sprite_size:(obj_x+1)*sprite_size, obj_y*sprite_size:(obj_y+1)*sprite_size, :] = cell_obs
+    def make_fog(self):
 
-        #draw and place agent
-        cell_obs = np.zeros((sprite_size, sprite_size, 3))
-        cell = self.grid[self.agent_x][self.agent_y]
-        assert cell.color == 'white'
-        assert cell.object == '@'
-        cell_obs[:,:,0] = str2array[cell.object]
-        cell_obs[:,:,1] = str2array[cell.object]
-        cell_obs[:,:,2] = str2array[cell.object]
-        self.observation[self.agent_x*sprite_size:(self.agent_x+1)*sprite_size, self.agent_y*sprite_size:(self.agent_y+1)*sprite_size, :] = cell_obs
+        if self.fog_type == 'noise':
+            fog = np.random.normal(size=(self.grid_size * self.sprite_size,
+                                         self.grid_size * self.sprite_size,
+                                         3))
+        elif self.fog_type == 'gray':
+            fog = np.zeros(shape=(self.grid_size * self.sprite_size,
+                                  self.grid_size * self.sprite_size,
+                                  3))
+            fog.fill(0.5)
+        else:
+            assert self.fog_type is None, f'Fog type must be noise, gray or None, got {self.fog_type}'
 
-        #draw fog
-        if self.fog_size is not None:
-            pos = list(range(self.grid_size))
-            pos = list(itertools.product(pos, pos))
-            xy_pos = [(x, y) for (x, y) in pos if (x > (self.agent_x + self.fog_size) or x < (self.agent_x - self.fog_size)) or (y > (self.agent_y + self.fog_size) or (y < self.agent_y - self.fog_size))]
-            for x, y in xy_pos:
-                self.observation[x*sprite_size:(x+1)*sprite_size,y*sprite_size:(y+1)*sprite_size] = self.fog[x*sprite_size:(x+1)*sprite_size,y*sprite_size:(y+1)*sprite_size]
+        return fog 
 
-        #scale up image
-        scaled_observation = np.zeros((self.observation.shape[0] * self.observation_scale,
-                                       self.observation.shape[1] * self.observation_scale,
-                                       3))
+    def draw_fog(self, grid, fog, x, y):
 
-        for j in range(self.observation.shape[0]):
-            for k in range(self.observation.shape[1]):
-                scaled_observation[j * self.observation_scale: (j+1) * self.observation_scale, 
-                                   k * self.observation_scale: (k+1) * self.observation_scale, 
-                                   :] = self.observation[j, k, :]
+        fog = np.copy(fog)
 
-        self.observation = scaled_observation
+        fog_x_start = max(0, (x - self.fog_size) * self.sprite_size)
+        fog_x_end = (x + self.fog_size + 1) * self.sprite_size
+        fog_y_start = max(0, (y - self.fog_size) * self.sprite_size)
+        fog_y_end = (y + self.fog_size + 1) * self.sprite_size
+
+        fog[fog_x_start:fog_x_end, fog_y_start:fog_y_end, :] = grid[fog_x_start:fog_x_end:, fog_y_start:fog_y_end, :] 
+
+        return fog
+
+    def draw_sprite(self, grid, x, y, color, sprite):
+
+        assert color in COLORS
+        assert sprite in SPRITES
+
+        x_start = x * self.sprite_size
+        x_end = (x + 1) * self.sprite_size
+        y_start = y * self.sprite_size
+        y_end = (y + 1) * self.sprite_size
+
+        grid[x_start:x_end,y_start:y_end,COLORS[color]] =  np.expand_dims(SPRITES[sprite], -1)
+
+        return grid
 
     def step(self, action):
+        
+        assert not self.done
+        assert action >= 0 and action <= 3
 
-        assert not self.done, "Environment needs to be reset!"
-
-        assert isinstance(action, int)
-
-        prev_agent_x, prev_agent_y = self.agent_x, self.agent_y
-
-        #actions: 0 = up, 1 = right, 2 = down, 3 = left
-
-        #move if possible
-        if action == 0: #up
+        if action == 0:
+            #move up
             if (self.agent_x - 1) < 0:
                 pass
             else:
                 self.agent_x -= 1
-
-        elif action == 1: #right
+            
+        elif action == 1:
+            #move right
             if (self.agent_y + 1) >= self.grid_size:
                 pass
             else:
                 self.agent_y += 1
-        
-        elif action == 2: #down
+
+        elif action == 2:
+            #move down
             if (self.agent_x + 1) >= self.grid_size:
                 pass
             else:
                 self.agent_x += 1
 
-        elif action == 3: #left
+        elif action == 3:
+            #move left
             if (self.agent_y - 1) < 0:
                 pass
             else:
                 self.agent_y -= 1
 
         else:
-            raise ValueError(f'Actions should be [0, 3], got: {action}')
+            raise ValueError(f'Actions should be [0, 3], got {action}')
 
         #check if we've found an object
-        if (self.agent_x, self.agent_y) in self.object_positions:
-            
-            #if we have, set done to True
+
+        if (self.agent_x, self.agent_y) in self.object_xys:
+
             self.done = True
 
-            #what have we found?
-            found_cell = self.grid[self.agent_x][self.agent_y]
+            if (self.agent_x, self.agent_y) == (self.target_x, self.target_y):
 
-            found_object = found_cell.object
-            found_color = found_cell.color
-
-            #if we've found the correct object, give reward
-            if str2idx[found_color] == self.instruction[0] and str2idx[found_object] == self.instruction[1]:
                 reward = self.positive_reward
+
             else:
-                #else give negative reward
+
                 reward = self.negative_reward
 
         else:
-            #if not found an object, give neutral reward
+
             reward = self.neutral_reward
 
-        #update agent position in the grid
-        self.grid[prev_agent_x][prev_agent_y] = Cell('black', '_')
-        self.grid[self.agent_x][self.agent_y] = Cell('white', '@')
+        self.observation = self.draw_grid()
 
-        #redraw the grid
-        self.grid_to_observation()
-
-        #update number of time-steps
         self.t += 1
 
-        #if we have reached the maximum number of time-steps and still not found an object
-        #then give negative reward
         if self.t >= self.time_limit and not self.done:
             self.done = True
             reward = self.negative_reward
