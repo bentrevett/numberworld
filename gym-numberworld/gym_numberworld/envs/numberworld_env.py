@@ -1,3 +1,4 @@
+import gym
 import numpy as np
 import random
 import itertools
@@ -100,10 +101,10 @@ SPRITES = {
                            [0,0,0,0,0,0,0]
                           ])}
 
-def make(**kwargs):
-    return NumberWorld(**kwargs)
+class NumberWorldEnv(gym.Env):
 
-class NumberWorld:
+    metadata = {'render.modes': ['human']}
+
     def __init__(self,
                  grid_size = 10,
                  n_objects = 10,
@@ -113,7 +114,6 @@ class NumberWorld:
                  positive_reward = 1,
                  neutral_reward = 0,
                  negative_reward = -1,
-                 seed = None,
                  ):
 
         assert grid_size >= 2, f'grid_size ({grid_size}) too small, must be at least 2'
@@ -122,7 +122,7 @@ class NumberWorld:
         assert time_limit >= 1, f'time_limit ({time_limit}) must be at least one'
         assert fog_size is None or (fog_size >= 1 and fog_type is not None), f'fog_size ({fog_size}) can only be set if fog_type ({fog_type}) is not None'
         assert fog_type in ['gray', 'noise', None], f'fog_type ({fog_type}) must be gray, noise or None'
-        
+
         self.grid_size = grid_size
         self.n_objects = n_objects
         self.time_limit = time_limit
@@ -131,10 +131,6 @@ class NumberWorld:
         self.positive_reward = positive_reward
         self.neutral_reward = neutral_reward
         self.negative_reward = negative_reward
-
-        if seed is not None:
-            random.seed(seed)
-            np.random.seed(seed)
 
         self.sprite_size = 7
         
@@ -148,6 +144,23 @@ class NumberWorld:
 
         grid_positions = [x for x in range(grid_size)]
         self.xy_positions = list(itertools.product(grid_positions, grid_positions))
+
+        image_space = gym.spaces.Box(low=0, 
+                                     high=1.0, 
+                                     shape=(grid_size * 7, 
+                                            grid_size * 7, 
+                                            3), 
+                                     dtype=np.float64)
+
+        instruction_space = gym.spaces.MultiDiscrete([len(self.stoi), len(self.stoi)])
+
+        self.observation_space = gym.spaces.Tuple((image_space, instruction_space))
+
+        self.action_space = gym.spaces.Discrete(4)
+
+    def seed(self, seed):
+        random.seed(seed)
+        np.random.seed(seed)
 
     def reset(self):
         
@@ -173,7 +186,7 @@ class NumberWorld:
 
         self.observation = self.draw_grid()
 
-        return self.instruction, self.observation
+        return (self.observation, self.instruction)
 
     def draw_grid(self):
 
@@ -292,4 +305,7 @@ class NumberWorld:
             self.done = True
             reward = self.negative_reward
 
-        return self.instruction, self.observation, reward, self.done
+        return (self.observation, self.instruction), reward, self.done, None
+
+    def render(self, mode='human', close= False):
+        return (self.observation, self.instruction)
