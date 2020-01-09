@@ -149,8 +149,8 @@ class NumberWorldEnv(gym.Env):
 
         image_space = gym.spaces.Box(low=0, 
                                      high=1.0, 
-                                     shape=(grid_size * 7, 
-                                            grid_size * 7, 
+                                     shape=(grid_size * self.sprite_size, 
+                                            grid_size * self.sprite_size, 
                                             3), 
                                      dtype=np.float64)
 
