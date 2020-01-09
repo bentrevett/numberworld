@@ -13,7 +13,7 @@ This repository contains **NumberWorld**, a toy environment for task-oriented la
 
 The agent is represented by a white square and all of the *objects* in the environments are represented by colored numbers. The objects can be one of 6 colors - red, blue, green, yellow, purple, cyan - and a number between 0 and 9.
 
-The state is a (I, O) tuple, where I is the instruction and O is the observation. The instruction consists of two words, a color and a number, e.g. "blue 5". The observation is the raw pixel representation of the environment. The instruction has already been numericalized and the dictionary can be accessed via the environment's `itos` attribute. The state is 10x10 (by default) grid represented by a 70x70 pixel image (each cell is 7x7 pixels).
+The state is a (O, I) tuple, where O is the observation and I is the instruction. The observation is the raw pixel representation of the environment The instruction consists of two words, a color and a number, e.g. "blue 5". The observation is 10x10 (by default) grid represented by a 70x70 pixel image (each cell is 7x7 pixels). The instruction has already been numericalized and the dictionary can be accessed via the environment's `itos` attribute.
 
 The goal of the agent is to reach the object denoted by the instruction, within the time-limit, whilst avoiding the incorrect objects. The agent's actions are moving a single cell north, south, east or west. The agent receives a positive reward for touching the correct object (+1 by default), a negative reward for touching an incorrect object or reaching the time-limit (-1 reward and 250 time-steps by default) and a neutral reward at all other times (0 by default). If the agent tries to go off the grid, it receives a neutral reward and stays where it is. The episode ends whenever an object is touched or the time-limit is reached.
 
@@ -31,7 +31,7 @@ There are two types of fog: `gray` and `noise`. When the fog is made by noise, i
     <img src="https://github.com/bentrevett/rl-grounding/blob/master/fog-noise.png">
 </p>
 
-A successful agent must *recognize* objects in the raw pixel state, *explore* the environment when objects are obscured by fog, *ground* each concept in the instruction to actions and visual elements, and *navigate* to the correct object.
+A successful agent must *recognize* objects in the raw pixel observation, *explore* the environment when objects are obscured by fog, *ground* each concept in the instruction to actions and visual elements, and *navigate* to the correct object.
 
 A random agent is provided, which reaches the correct object ~10% of the time with the default environment settings.
 
