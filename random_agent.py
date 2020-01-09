@@ -5,10 +5,10 @@ import gym
 import gym_numberworld
 
 env = gym.make('numberworld-v0',
-               grid_size = 10, #pass argument commands to gym.make
+               grid_size = 10, #pass environment arguments to gym.make
                n_objects = 10)
 
-env.seed(1)
+env.seed(1) #seed environment
 
 n_episodes = 1000
 successful_episodes = 0
@@ -31,4 +31,6 @@ for episode in tqdm(range(n_episodes)):
             if reward == env.positive_reward:
                 successful_episodes += 1
 
-print(f'Successfully found the correct object {successful_episodes/n_episodes*100:.3}% of the time')
+sucess_percent = successful_episodes/n_episodes
+
+print(f'Successfully found the correct object {successful_percent*100:.3}% of the time')
