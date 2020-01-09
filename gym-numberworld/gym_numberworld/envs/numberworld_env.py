@@ -116,6 +116,8 @@ class NumberWorldEnv(gym.Env):
                  negative_reward = -1,
                  ):
 
+        self.info = locals()
+
         assert grid_size >= 2, f'grid_size ({grid_size}) too small, must be at least 2'
         assert grid_size**2 >= (n_objects + 1), f'grid_size ({grid_size}) not big enough for desired n_objects ({n_objects})'
         assert n_objects >= 1, f'n_objects ({n_objects}) must be at least 1'
@@ -305,7 +307,7 @@ class NumberWorldEnv(gym.Env):
             self.done = True
             reward = self.negative_reward
 
-        return (self.observation, self.instruction), reward, self.done, None
+        return (self.observation, self.instruction), reward, self.done, self.info
 
     def render(self, mode='human', close= False):
         return (self.observation, self.instruction)
