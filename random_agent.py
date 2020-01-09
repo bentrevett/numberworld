@@ -10,7 +10,7 @@ env = gym.make('numberworld-v0',
 
 env.seed(1) #seed environment
 
-n_episodes = 1000
+n_episodes = 100_000
 successful_episodes = 0
 
 for episode in tqdm(range(n_episodes)):
@@ -31,6 +31,6 @@ for episode in tqdm(range(n_episodes)):
             if reward == env.positive_reward:
                 successful_episodes += 1
 
-sucess_percent = successful_episodes/n_episodes
+success_percent = successful_episodes/n_episodes
 
-print(f'Successfully found the correct object {successful_percent*100:.3}% of the time')
+print(f'Successfully found the correct object {success_percent*100:.3}% of the time')
