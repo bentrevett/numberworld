@@ -5,8 +5,9 @@ import gym
 import gym_numberworld
 
 env = gym.make('numberworld-v0',
-               grid_size = 10, #pass environment arguments to gym.make
-               n_objects = 10)
+               grid_size = 10, # pass environment arguments to gym.make
+               n_objects = 10,
+               removed_objects = [('red', '3')]) # red 3 will not appear in environment
 
 env.seed(1) #seed environment
 

@@ -114,6 +114,7 @@ class NumberWorldEnv(gym.Env):
                  positive_reward = 1,
                  neutral_reward = 0,
                  negative_reward = -1,
+                 removed_objects = []
                  ):
 
         self.info = locals()
@@ -138,7 +139,12 @@ class NumberWorldEnv(gym.Env):
         
         colors = ['red', 'green', 'blue', 'yellow', 'purple', 'cyan']
         numbers = [str(i) for i in range(10)]
-        self.objects = list(itertools.product(colors, numbers)) 
+
+        self.objects = list(itertools.product(colors, numbers))
+
+        for removed_object in removed_objects:
+            self.objects.remove(removed_object)
+
         self.stoi = {x: i for i, x in enumerate(colors+numbers)}
         self.itos = {i: x for i, x in enumerate(colors+numbers)}
 
