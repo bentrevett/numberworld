@@ -5,28 +5,28 @@ import gym
 import gym_numberworld
 
 env = gym.make('numberworld-v0',
-               grid_size = 10, # pass environment arguments to gym.make
-               n_objects = 10,
-               removed_objects = [('red', '3')]) # red 3 will not appear in environment
+               grid_size=10,  # pass environment arguments to gym.make
+               n_objects=10,
+               removed_objects=[('red', '3')])  # red 3 will not appear in environment
 
-env.seed(1) #seed environment
+env.seed(1)  # seed environment
 
 n_episodes = 100_000
 successful_episodes = 0
 
 for episode in tqdm(range(n_episodes)):
 
-    #environment must be reset at the start of every episode
+    # environment must be reset at the start of every episode
     (observation, instruction) = env.reset()
     done = False
 
     while not done:
 
-        #pick random action
+        # pick random action
         action = random.randint(0, 3)
 
-        #perform action
-        (observation, instruction) , reward, done, info = env.step(action)
+        # perform action
+        (observation, instruction), reward, done, info = env.step(action)
 
         if done:
             if reward == env.positive_reward:

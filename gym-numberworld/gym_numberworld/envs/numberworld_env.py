@@ -153,11 +153,11 @@ class NumberWorldEnv(gym.Env):
         grid_positions = [x for x in range(grid_size)]
         self.xy_positions = list(itertools.product(grid_positions, grid_positions))
 
-        image_space = gym.spaces.Box(low=0, 
-                                     high=1.0, 
-                                     shape=(grid_size * self.sprite_size, 
-                                            grid_size * self.sprite_size, 
-                                            3), 
+        image_space = gym.spaces.Box(low=0,
+                                     high=255.0,
+                                     shape=(grid_size * self.sprite_size,
+                                            grid_size * self.sprite_size,
+                                            3),
                                      dtype=np.float64)
 
         instruction_space = gym.spaces.MultiDiscrete([len(self.stoi), len(self.stoi)])
@@ -202,10 +202,10 @@ class NumberWorldEnv(gym.Env):
                          self.grid_size * self.sprite_size,
                          3))
 
-        self.draw_sprite(grid, self.agent_x, self.agent_y, 'white', '@')
-
         for (object_color, object_number, object_x, object_y) in self.env_objects:
             grid = self.draw_sprite(grid, object_x, object_y, object_color, object_number)
+
+        self.draw_sprite(grid, self.agent_x, self.agent_y, 'white', '@')
 
         if self.fog_type is not None:
             grid = self.draw_fog(grid, self.fog, self.agent_x, self.agent_y)
@@ -251,7 +251,7 @@ class NumberWorldEnv(gym.Env):
         y_start = y * self.sprite_size
         y_end = (y + 1) * self.sprite_size
 
-        grid[x_start:x_end,y_start:y_end,COLORS[color]] =  np.expand_dims(SPRITES[sprite], -1)
+        grid[x_start:x_end,y_start:y_end,COLORS[color]] =  np.expand_dims(SPRITES[sprite], -1) * 255
 
         return grid
 
@@ -315,5 +315,5 @@ class NumberWorldEnv(gym.Env):
 
         return (self.observation, self.instruction), reward, self.done, self.info
 
-    def render(self, mode='human', close= False):
+    def render(self, mode='human', close=False):
         return (self.observation, self.instruction)
